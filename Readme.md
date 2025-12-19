@@ -1,53 +1,35 @@
-# 🤖 Retrieval-Augmented Generation (RAG) System
+# 🤖 Advanced Retrieval-Augmented Generation (RAG) System
 
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
-[![React](https://img.shields.io/badge/React-2024-61DAFB.svg)](https://reactjs.org/)
 [![Flask](https://img.shields.io/badge/Flask-Backend-lightgrey.svg)](https://flask.palletsprojects.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Groq](https://img.shields.io/badge/LLM-Groq--LLaMA--3.3-orange.svg)](https://groq.com/)
+[![FAISS](https://img.shields.io/badge/VectorDB-FAISS-green.svg)](https://github.com/facebookresearch/faiss)
 
-Ce projet implémente un système de **RAG (Retrieval-Augmented Generation)** complet. Il permet d'uploader des documents PDF, de les indexer dynamiquement et d'interroger un LLM (via Groq) en garantissant que les réponses sont strictement basées sur le contenu fourni.
-
----
-
-## 🧠 Architecture Overview
-
-Le système repose sur un pipeline de données en temps réel :
-
-1. **Ingestion** : Extraction de texte depuis les PDF et découpage en segments (Chunking).
-2. **Vectorisation** : Génération d'embeddings via `all-MiniLM-L6-v2`.
-3. **Stockage** : Indexation vectorielle avec **FAISS**.
-4. **Récupération (Retrieval)** : Recherche de similarité cosinus lors d'une question.
-5. **Génération** : Inférence via **Groq LLM (LLaMA 3.3 70B)** avec un prompt anti-hallucination.
-6. **Évaluation** : Analyse de la fiabilité avec **RAGAS**.
-
-
+## 📌 Project Overview
+This repository contains a full-stack **Retrieval-Augmented Generation (RAG)** application designed to provide grounded, hallucination-free answers based on user-provided documents. The system supports dynamic PDF ingestion, audio transcription, and automated evaluation.
 
 ---
 
-## 🔧 Tech Stack
+## 🖼️ Graphical Abstract (Pipeline Pipeline)
 
-* **Backend** : Python, Flask, LangChain/LlamaIndex
-* **Embeddings** : Sentence Transformers (`all-MiniLM-L6-v2`)
-* **Vector DB** : FAISS
-* **LLM** : Groq API (LLaMA 3.3 70B)
-* **Frontend** : React.js, Tailwind CSS
-* **Evaluation** : RAGAS (Metric: Faithfulness, Answer Relevancy)
+The following diagram illustrates the end-to-end data flow, from document ingestion to LLM generation and RAGAS evaluation.
 
----
+<img width="689" height="205" alt="image" src="https://github.com/user-attachments/assets/7c7a44ce-5fd7-4ed4-aa95-52edab18a1d5" />
 
-## 📂 Project Structure
 
-```text
-rag_project/
-├── backend/
-│   ├── app/
-│   │   ├── rag.py           # Logique cœur du RAG
-│   │   └── utils.py         # Helpers (PDF processing)
-│   ├── app.py               # Flask API Entry point
-│   ├── evaluate_rag.py      # Évaluation RAGAS
-│   ├── vectorstore/         # Index FAISS local
-│   └── .env.example         # Template pour les clés API
-├── frontend/
-│   ├── src/                 # Composants React
-│   └── package.json
-└── README.md
+```mermaid
+graph TD
+    A[User Input: PDF / Audio] --> B{Backend Processing}
+    B -->|pdfplumber| C[Text Extraction]
+    B -->|Whisper-v3| D[Audio Transcription]
+    C --> E[Smart Semantic Chunking]
+    D --> E
+    E --> F[Sentence Transformers: all-MiniLM-L6-v2]
+    F --> G[(FAISS Vector Database)]
+    H[User Question] --> I[Query Embedding]
+    I --> J[Top-k Similarity Search]
+    J --> K[Context Retrieval]
+    K --> L[Prompt Construction & Grounding]
+    L --> M[Groq: LLaMA 3.3 70B]
+    M --> N[Final Answer]
+    N --> O[RAGAS Evaluation: Faithfulness/Relevancy]
