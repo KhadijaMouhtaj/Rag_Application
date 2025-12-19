@@ -1,0 +1,11 @@
+flask
+flask-cors
+pdfplumber
+sentence-transformers
+faiss-cpu
+numpy
+ragas
+datasets
+openai
+python-dotenv
+groq
