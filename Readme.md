@@ -50,93 +50,9 @@ Traditional LLMs are limited by their training cutoff dates and cannot access pr
 
 The following diagram illustrates our end-to-end RAG pipeline, from document ingestion to LLM generation and RAGAS evaluation:
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    DOCUMENT INPUT                       │
-│              (PDF / Audio Files)                        │
-└────────┬────────────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────────────────────┐
-│              INGESTION & EXTRACTION                     │
-│  • PDFs: pdfplumber text extraction                    │
-│  • Audio: Whisper-large-v3 transcription (Groq)       │
-│  • Text normalization and cleaning                     │
-└────────┬────────────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────────────────────┐
-│              SMART CHUNKING                             │
-│  • Paragraph-aware splitting                           │
-│  • Max: 300 words per chunk                            │
-│  • Sentence-level fallback for long paragraphs         │
-│  • Preserves semantic coherence                        │
-└────────┬────────────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────────────────────┐
-│              VECTORIZATION                              │
-│  • Model: all-MiniLM-L6-v2                            │
-│  • Output: 384-dimensional embeddings                  │
-│  • Speed: 14,200 sentences/sec                         │
-│  • Semantic representation of text                     │
-└────────┬────────────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────────────────────┐
-│         VECTOR STORAGE (FAISS Index)                    │
-│  • Index Type: IndexFlatL2 (exact search)             │
-│  • Persistent storage: vectorstore/                    │
-│  • Ultra-fast similarity search (L2 distance)          │
-│  • Instant reloads across sessions                     │
-└────────┬────────────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────┐
-│  USER QUERY     │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────────────────────────────────────────────┐
-│         SEMANTIC RETRIEVAL                              │
-│  • Query vectorization with same model                 │
-│  • Top-20 candidates from FAISS                        │
-│  • Filter by selected source documents                 │
-│  • Select Top-8 most relevant chunks                   │
-│  • Context window: ~2400 words                         │
-└────────┬────────────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────────────────────┐
-│         PROMPT CONSTRUCTION                             │
-│  System: Strict source-grounding instructions          │
-│  Context: [Top-8 retrieved chunks]                     │
-│  Question: [User query]                                │
-│  Instruction: Answer ONLY from context                 │
-└────────┬────────────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────────────────────┐
-│         LLM GENERATION (Groq API)                       │
-│  • Model: llama-3.3-70b-versatile                      │
-│  • Temperature: 0.3 (balanced determinism)             │
-│  • Max tokens: 800                                     │
-│  • Inference speed: 500+ tokens/sec                    │
-└────────┬────────────────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────┐
-│  FINAL ANSWER   │
-│  (with sources) │
-└─────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────────────────────────┐
-│         RAGAS EVALUATION                                │
-│  • Faithfulness: 89.75% ✅                             │
-│  • 9/11 questions scored ≥80%                          │
-│  • Production-ready quality                            │
-└─────────────────────────────────────────────────────────┘
+
 ```
+<img width="691" height="195" alt="image" src="https://github.com/user-attachments/assets/9189a886-51c2-4b30-bcde-ddacac92acc9" />
 
 ---
 
@@ -693,3 +609,4 @@ rag_project/
 │   ├── requirements.txt    # Liste des dépendances Python
 │   └── .env                # Clé API Groq (Fichier masqué)
 └── frontend/               # Interface utilisateur React
+
